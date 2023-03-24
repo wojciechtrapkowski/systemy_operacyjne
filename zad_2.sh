@@ -1,98 +1,86 @@
 #!/bin/bash -f
+declare -A findCommand
 option=0
-nazwa=""
-katalog=""
-zawartosc=""
-rozmiar=""
-empty=0
-delete=0
+quotationMark='"'
 
-nameOption=""
-dirOption=""
-zawOption=""
-rozmiarOption=""
-emptyOption=""
-deleteOption=""
-
-findMethod=""
-c='"'
-
-echo $c
 while [[ $option -ne 8 ]] 
 	do
 		echo "Menu"
-		echo "1. Nazwa ${nazwa}"
-		echo "2. Katalog ${katalog}" 
-		echo "3. Rozmiar pliku ${rozmiar}"
-		echo "4. Czy plik ma byc pusty [0/1] ${empty}"
-		echo "5. Czy chcesz usunac pliki [0/1] ${delete}"
-		echo "6. Zawartosc ${zawartosc}"
+		echo "1. Podaj nazwe pliku ${findCommand[name_input]}"
+		echo "2. Podaj nazwe katalog ${findCommand[dir_input]}" 
+		echo "3. Podaj rozmiar pliku ${findCommand[size_input]}"
+		echo "4. Czy plik ma byc pusty [0/1] ${findCommand[empty_input]}"
+		echo "5. Czy chcesz usunac pliki [0/1] ${findCommand[delete_input]}"
+		echo "6. Zawartosc pliku ${findCommand[contain_input]}"
 		echo "7. Szukaj" 
 		echo "8. Wyjscie"
 		read option
 		case "$option" in
 			"1") echo "Podaj nazwe pliku: ";
-			read nazwa;
-			if [ "$nazwa" != "" ]
+			read findCommand[name_input];
+			if [ "$findCommand[name_input]" != "" ]
 			then
-				nameOption="-name ${c}${nazwa}*${c}";
+				findCommand[name]="-name ${quotationMark}${findCommand[name_input]}*${quotationMark}";
 			else
-				nameOption="";
+				findCommand[name]="";
 			fi
 ;;
 			"2") echo "Podaj nazwe katalogu";
-			read katalog;
+			read findCommand[dir_input];
 
-			if [ "$katalog" != "" ]
+			if [ "$findCommand[dir_input]" != "" ]
 			then
-				dirOption="${katalog}";
+				findCommand[dir]="${findCommand[dir_input]}";
 			else
-				dirOption="";
+				findCommand[dir]="";
 			fi
 ;;			
 			"3") echo "Podaj rozmiar pliku";
-			read rozmiar;
-			if [ "$rozmiar" != "" ]
+			read findCommand[size_input];
+			if [ "$findCommand[size_input]" != "" ]
 			then
-				rozmiarOption="-size ${rozmiar}";
+				findCommand[size]="-size ${findCommand[size_input]}";
 			else
-				rozmiarOption="";
+				findCommand[size]="";
 			fi
 ;;
 			"4") echo "Czy plik ma byc pusty [0/1]";
-				read empty;
-				if [ "$empty" = "1" ]
-				then
-					emptyOption="-empty";
-				else
-					emptyOption="";
-				fi
+			read findCommand[empty_input];
+			if [[ "${findCommand[empty_input]}" == "1" ]]
+			then
+				echo "empty";
+				findCommand[empty_input]="1";
+				findCommand[empty]="-empty";
+			else
+				findCommand[empty_input]="0";
+				findCommand[empty]="";
+			fi
 			;;
 			"5") echo "Czy plik ma byc usuniety [0/1]";
-			read delete;
-			if [ "$delete" != "" ]
+			read findCommand[delete_input];
+			if [[ "${findCommand[delete_input]}" == "1" ]]
 			then
-				deleteOption="-delete";
+				echo "delete";
+				findCommand[delete_input]="1";
+				findCommand[delete]="-delete";
 			else
-				deleteOption="";
+				findCommand[delete_input]="0";
+				findCommand[delete]="";
 			fi
 ;;
 			"6") echo "Podaj zawartosc";
-			read zawartosc;
-			if [ "$zawartosc" != "" ]
+			read findCommand[contain_input];
+			if [ "$findCommand[contain_input]" != "" ]
 			then
-				zawOption="-exec grep -l ${c}${zawartosc}${c} {} \;";
+				findCommand[contain]="-exec grep -l ${quotationMark}${findCommand[contain_input]}${quotationMark} {} \;";				
 			else
-				zawOption="";
+				findCommand[contain]="";
 			fi
 ;;
-			"7")  
-				findMethod="find ${dirOption} ${nameOption} ${rozmiarOption} ${emptyOption} ${deleteOption} -type f ${zawOption}";
+			"7") 
+				findMethod="find ${findCommand[dir]} ${findCommand[name]} ${findCommand[size]} ${findCommand[empty]} -type f ${findCommand[contain]} ${findCommand[delete]}";
 				eval $findMethod;	
 ;;
 			"8") option=8;;
 		esac
 	done
-
-
-
