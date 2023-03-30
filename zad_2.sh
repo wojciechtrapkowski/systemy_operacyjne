@@ -79,6 +79,7 @@ while [[ $option -ne 8 ]]
 ;;
 			"7") 
 				findMethod="find ${findCommand[dir]} ${findCommand[name]} ${findCommand[size]} ${findCommand[empty]} -type f ${findCommand[contain]} ${findCommand[delete]}";
+				echo "Znaleziono: ";
 				eval $findMethod;	
 ;;
 			"8") option=8;;
